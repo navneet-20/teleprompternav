@@ -15,7 +15,7 @@ import java.util.*;
 
 public class MainActivity extends Activity {
     EditText script, minutes, seconds;
-    TextView count, wpmLabel, modeHint;
+    TextView count, wpmLabel, modeHint, targetSummary;
     SeekBar wpm, opacity, fontSize;
     RadioButton manualMode, timeMode;
 
@@ -82,7 +82,7 @@ public class MainActivity extends Activity {
         modeHint=tv("Choose Manual WPM or let the target time calculate it.",11); modeHint.setTextColor(Color.LTGRAY); root.addView(modeHint);
         LinearLayout time=new LinearLayout(this);
         minutes=new EditText(this); seconds=new EditText(this);
-        minutes.setInputType(2); seconds.setInputType(2); minutes.setHint("Minutes"); seconds.setHint("Seconds");
+        minutes.setInputType(2); seconds.setInputType(2); minutes.setHint("Minutes"); seconds.setHint("Seconds (0–59)");
         minutes.setTextColor(Color.WHITE); seconds.setTextColor(Color.WHITE); minutes.setHintTextColor(Color.GRAY); seconds.setHintTextColor(Color.GRAY);
         time.addView(minutes,new LinearLayout.LayoutParams(0,dp(48),1)); time.addView(seconds,new LinearLayout.LayoutParams(0,dp(48),1));
         root.addView(time);
@@ -104,11 +104,11 @@ public class MainActivity extends Activity {
             boolean timed=timeMode.isChecked();
             wpm.setEnabled(!timed);
             minutes.setEnabled(timed); seconds.setEnabled(timed);
-            modeHint.setText(timed ? "WPM is calculated from your script and target time." : "Set your reading speed manually.");
+            modeHint.setText(timed ? "WPM is calculated from your script and target time." : "Set your reading speed manually.");\n            targetSummary.setVisibility(timed ? View.VISIBLE : View.GONE);
             updateCalculatedWpm();
         };
         manualMode.setOnCheckedChangeListener(mode); timeMode.setOnCheckedChangeListener(mode);
-        minutes.setEnabled(false); seconds.setEnabled(false);
+        minutes.setEnabled(false); seconds.setEnabled(false);\n        targetSummary.setVisibility(View.GONE);
 
         minutes.addTextChangedListener(simpleWatcher()); seconds.addTextChangedListener(simpleWatcher());
 
