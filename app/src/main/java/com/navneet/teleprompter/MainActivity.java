@@ -24,13 +24,18 @@ public class MainActivity extends Activity {
         TextView t=new TextView(this); t.setText(s); t.setTextSize(size); t.setTextColor(Color.WHITE);
         t.setPadding(dp(2),dp(2),dp(2),dp(2)); return t;
     }
-    Button action(String s){ Button b=new Button(this); b.setText(s); b.setTextSize(12); return b; }
+    Button action(String s){ Button b=new Button(this); b.setText(s); b.setTextSize(12); b.setTextColor(Color.WHITE);
+        b.setAllCaps(false); b.setPadding(dp(4),0,dp(4),0);
+        GradientDrawable g=new GradientDrawable(); g.setColor(Color.rgb(35,38,53)); g.setCornerRadius(dp(14));
+        b.setBackground(g); return b; }
 
     @Override public void onCreate(Bundle b){ super.onCreate(b); build(); }
 
     void build(){
         LinearLayout root=new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(dp(16),dp(14),dp(16),dp(10)); root.setBackgroundColor(Color.rgb(14,16,24));
+        root.setPadding(dp(16),dp(14),dp(16),dp(10)); GradientDrawable rootBg=new GradientDrawable(GradientDrawable.Orientation.TL_BR,
+                new int[]{Color.rgb(12,14,24),Color.rgb(34,24,55),Color.rgb(17,30,48)});
+        rootBg.setCornerRadius(dp(0)); root.setBackground(rootBg);
 
         LinearLayout header=new LinearLayout(this); header.setGravity(Gravity.CENTER_VERTICAL);
         TextView logo=new TextView(this); logo.setText("◉"); logo.setTextSize(30); logo.setTextColor(Color.rgb(170,145,255));
@@ -46,21 +51,21 @@ public class MainActivity extends Activity {
         tools.addView(paste,new LinearLayout.LayoutParams(0,dp(46),1));
         tools.addView(copy,new LinearLayout.LayoutParams(0,dp(46),1));
         tools.addView(clear,new LinearLayout.LayoutParams(0,dp(46),1));
-        root.addView(tools);
+        tools.setPadding(0,dp(4),0,dp(8)); root.addView(tools);
 
         script=new EditText(this); script.setHint("Paste or type your script here…"); script.setGravity(Gravity.TOP|Gravity.START);
         script.setTextColor(Color.WHITE); script.setHintTextColor(Color.rgb(130,130,135)); script.setTextSize(18);
         GradientDrawable scriptBg=new GradientDrawable(); scriptBg.setColor(Color.rgb(25,27,38)); scriptBg.setCornerRadius(dp(16)); script.setBackground(scriptBg); script.setPadding(dp(14),dp(14),dp(14),dp(14));
         root.addView(script,new LinearLayout.LayoutParams(-1,0,1));
 
-        count=tv("0 words",12); count.setTextColor(Color.LTGRAY); root.addView(count,new LinearLayout.LayoutParams(-1,dp(28)));
+        count=tv("0 words",12); count.setTextColor(Color.LTGRAY); count.setPadding(dp(4),dp(4),0,0); root.addView(count,new LinearLayout.LayoutParams(-1,dp(32)));
         script.addTextChangedListener(new TextWatcher(){
             public void beforeTextChanged(CharSequence s,int a,int c,int d){}
             public void onTextChanged(CharSequence s,int a,int b,int c){ count.setText(words()+" words"); updateCalculatedWpm(); }
             public void afterTextChanged(Editable e){}
         });
 
-        root.addView(tv("Playback speed",14));
+        TextView playbackTitle=tv("Playback speed",16); playbackTitle.setTypeface(Typeface.DEFAULT,Typeface.BOLD); root.addView(playbackTitle);
         LinearLayout modes=new LinearLayout(this);
         manualMode=new RadioButton(this); manualMode.setText("Manual WPM"); manualMode.setTextColor(Color.WHITE); manualMode.setChecked(true);
         timeMode=new RadioButton(this); timeMode.setText("Target time"); timeMode.setTextColor(Color.WHITE);
@@ -82,15 +87,15 @@ public class MainActivity extends Activity {
         time.addView(minutes,new LinearLayout.LayoutParams(0,dp(48),1)); time.addView(seconds,new LinearLayout.LayoutParams(0,dp(48),1));
         root.addView(time);
 
-        root.addView(tv("Overlay opacity",13));
+        TextView opacityTitle=tv("Overlay opacity",14); opacityTitle.setTextColor(Color.rgb(205,200,220)); root.addView(opacityTitle);
         opacity=new SeekBar(this); opacity.setMax(100); opacity.setProgress(90); root.addView(opacity,new LinearLayout.LayoutParams(-1,dp(38)));
 
-        root.addView(tv("Text size",13));
+        TextView sizeTitle=tv("Text size",14); sizeTitle.setTextColor(Color.rgb(205,200,220)); root.addView(sizeTitle);
         fontSize=new SeekBar(this); fontSize.setMax(24); fontSize.setProgress(10); root.addView(fontSize,new LinearLayout.LayoutParams(-1,dp(38)));
 
         Button launch=action("▶  Launch Floating Teleprompter");
         launch.setTextSize(14); launch.setTextColor(Color.WHITE); GradientDrawable launchBg=new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,new int[]{Color.rgb(120,92,220),Color.rgb(72,142,220)}); launchBg.setCornerRadius(dp(18)); launch.setBackground(launchBg); root.addView(launch,new LinearLayout.LayoutParams(-1,dp(56)));
-        TextView hint=tv("Tip: Target time automatically calculates WPM. You can adjust speed while reading.",11);
+        TextView hint=tv("Target time calculates WPM automatically • Adjust speed while reading",11);
         hint.setTextColor(Color.LTGRAY); root.addView(hint);
 
         CompoundButton.OnCheckedChangeListener mode=(v,checked)->{
