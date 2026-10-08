@@ -1,0 +1,23 @@
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Android
+local.properties
+captures/
+
+# Signing credentials
+*.jks
+*.keystore
+*.p12
+*-private-key.*
+teleprompter-upload.pem
+
+# IDE
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
