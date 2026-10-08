@@ -87,6 +87,11 @@ public class MainActivity extends Activity {
         time.addView(minutes,new LinearLayout.LayoutParams(0,dp(48),1)); time.addView(seconds,new LinearLayout.LayoutParams(0,dp(48),1));
         root.addView(time);
 
+        targetSummary=tv("Target: —",11);
+        targetSummary.setTextColor(Color.LTGRAY);
+        targetSummary.setVisibility(View.GONE);
+        root.addView(targetSummary,new LinearLayout.LayoutParams(-1,dp(28)));
+
         TextView opacityTitle=tv("Overlay opacity",14); opacityTitle.setTextColor(Color.rgb(205,200,220)); root.addView(opacityTitle);
         opacity=new SeekBar(this); opacity.setMax(100); opacity.setProgress(90); root.addView(opacity,new LinearLayout.LayoutParams(-1,dp(38)));
 
