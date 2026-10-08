@@ -72,7 +72,7 @@ public class MainActivity extends Activity {
         modes.addView(manualMode,new LinearLayout.LayoutParams(0,dp(48),1)); modes.addView(timeMode,new LinearLayout.LayoutParams(0,dp(48),1));
         root.addView(modes);
 
-        wpmLabel=tv("Speed: 150 WPM",13); root.addView(wpmLabel);
+        wpmLabel=tv("Speed: 150 WPM",14); wpmLabel.setTypeface(Typeface.DEFAULT,Typeface.BOLD); root.addView(wpmLabel);
         wpm=new SeekBar(this); wpm.setMax(350); wpm.setProgress(130); root.addView(wpm,new LinearLayout.LayoutParams(-1,dp(42)));
         wpm.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
             public void onProgressChanged(SeekBar s,int p,boolean f){ if(manualMode.isChecked()) wpmLabel.setText("Speed: "+(p+20)+" WPM"); }
