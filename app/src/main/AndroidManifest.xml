@@ -8,7 +8,7 @@
    <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
   </activity>
   <service android:name=".OverlayService" android:exported="false" android:foregroundServiceType="specialUse">
-   <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="floating teleprompter overlay"/>
+   <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="User-initiated floating teleprompter overlay that keeps the script visible while the user reads or records content."/>
   </service>
  </application>
 </manifest>
