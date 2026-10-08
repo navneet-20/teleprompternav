@@ -1,1 +1,5 @@
-<resources><color name="black">#000000</color><color name="white">#FFFFFF</color></resources>
+<resources>
+ <color name="black">#000000</color><color name="white">#FFFFFF</color>
+ <color name="brand_primary">#9A7BFF</color><color name="brand_secondary">#6FD6FF</color>
+ <color name="surface">#191B26</color><color name="background">#0E1018</color>
+</resources>
