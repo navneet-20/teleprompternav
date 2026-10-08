@@ -104,11 +104,13 @@ public class MainActivity extends Activity {
             boolean timed=timeMode.isChecked();
             wpm.setEnabled(!timed);
             minutes.setEnabled(timed); seconds.setEnabled(timed);
-            modeHint.setText(timed ? "WPM is calculated from your script and target time." : "Set your reading speed manually.");\n            targetSummary.setVisibility(timed ? View.VISIBLE : View.GONE);
+            modeHint.setText(timed ? "WPM is calculated from your script and target time." : "Set your reading speed manually.");
+            targetSummary.setVisibility(timed ? View.VISIBLE : View.GONE);
             updateCalculatedWpm();
         };
         manualMode.setOnCheckedChangeListener(mode); timeMode.setOnCheckedChangeListener(mode);
-        minutes.setEnabled(false); seconds.setEnabled(false);\n        targetSummary.setVisibility(View.GONE);
+        minutes.setEnabled(false); seconds.setEnabled(false);
+        targetSummary.setVisibility(View.GONE);
 
         minutes.addTextChangedListener(simpleWatcher()); seconds.addTextChangedListener(simpleWatcher());
 
