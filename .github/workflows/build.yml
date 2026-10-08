@@ -56,7 +56,7 @@ jobs:
       - name: Read app version
         shell: bash
         run: |
-          VERSION=$(grep -E "versionName ['"]+[0-9]+\.[0-9]+\.[0-9]+['"]" app/build.gradle | sed -E "s/.*versionName ['"]([^'"]+)['"].*/\1/")
+          VERSION=$(awk -F"'" '/versionName/ {print $2; exit}' app/build.gradle)
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Prepare versioned APK filename
