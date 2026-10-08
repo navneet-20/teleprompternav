@@ -3,7 +3,10 @@ name: Build APK
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'bugfix/**'
+      - features
 
 permissions:
   contents: write
@@ -26,15 +29,11 @@ jobs:
         shell: bash
         run: |
           SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
-          echo "SDK_ROOT=$SDK_ROOT"
           SDKMANAGER="$(find "$SDK_ROOT/cmdline-tools" -type f -name sdkmanager 2>/dev/null | head -n 1)"
           if [ -z "$SDKMANAGER" ]; then
             echo "sdkmanager not found"
-            find "$SDK_ROOT" -maxdepth 4 -type f -name sdkmanager -print 2>/dev/null || true
             exit 1
           fi
-          echo "SDKMANAGER=$SDKMANAGER"
-          echo "SDKMANAGER_DIR=$(dirname "$SDKMANAGER")" >> "$GITHUB_ENV"
           echo "ANDROID_SDK_ROOT=$SDK_ROOT" >> "$GITHUB_ENV"
           echo "$(dirname "$SDKMANAGER")" >> "$GITHUB_PATH"
           echo "$SDK_ROOT/platform-tools" >> "$GITHUB_PATH"
@@ -53,20 +52,33 @@ jobs:
       - name: Build debug APK
         run: gradle :app:assembleDebug --no-daemon --stacktrace
 
-      - name: Upload APK
+      - name: Read app version
+        shell: bash
+        run: |
+          VERSION=$(awk -F"'" '/versionName/ {print $2; exit}' app/build.gradle)
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Prepare versioned APK filename
+        shell: bash
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk "app/build/outputs/apk/debug/TeleprompterPro-v${VERSION}.apk"
+
+      - name: Upload versioned APK
         uses: actions/upload-artifact@v4
         with:
-          name: TeleprompterPro-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: TeleprompterPro-v${{ env.VERSION }}-${{ github.ref_name }}-debug
+          path: app/build/outputs/apk/debug/TeleprompterPro-v${{ env.VERSION }}.apk
           if-no-files-found: error
 
       - name: Create GitHub Release
+        if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
-          VERSION=$(grep -E "versionName ['\"]+[0-9]+\.[0-9]+\.[0-9]+['\"]" app/build.gradle | sed -E "s/.*versionName ['\"]([^'\"]+)['\"].*/\1/")
           echo "Releasing version $VERSION"
-          gh release create "v$VERSION" app/build/outputs/apk/debug/app-debug.apk \
-            --title "Teleprompter Pro v$VERSION" \
-            --generate-notes
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            echo "Release v$VERSION already exists; skipping release creation."
+          else
+            gh release create "v$VERSION" "app/build/outputs/apk/debug/TeleprompterPro-v${VERSION}.apk"               --title "Teleprompter Pro v$VERSION"               --generate-notes
+          fi
