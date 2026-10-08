@@ -56,8 +56,10 @@ jobs:
       - name: Read app version
         shell: bash
         run: |
-          VERSION=$(awk -F"'" '/versionName/ {print $2; exit}' app/build.gradle)
+          VERSION=$(grep -o "versionName '[^']*'" app/build.gradle | cut -d"'" -f2)
+          SAFE_REF=$(printf '%s' "\${GITHUB_REF_NAME}" | tr '/' '-')
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "SAFE_REF=$SAFE_REF" >> "$GITHUB_ENV"
 
       - name: Prepare versioned APK and AAB filenames
         shell: bash
@@ -68,7 +70,7 @@ jobs:
       - name: Upload versioned APK and AAB
         uses: actions/upload-artifact@v4
         with:
-          name: TeleprompterPro-v${{ env.VERSION }}-${{ github.ref_name }}
+          name: TeleprompterPro-v${{ env.VERSION }}-${{ env.SAFE_REF }}
           path: |
             app/build/outputs/apk/debug/TeleprompterPro-v${{ env.VERSION }}.apk
             app/build/outputs/bundle/debug/TeleprompterPro-v${{ env.VERSION }}.aab
@@ -82,7 +84,11 @@ jobs:
         run: |
           echo "Releasing version $VERSION"
           if gh release view "v$VERSION" >/dev/null 2>&1; then
-            echo "Release v$VERSION already exists; skipping release creation."
+            echo "Release v$VERSION already exists; uploading APK and AAB."
+            gh release upload "v$VERSION" \
+              "app/build/outputs/apk/debug/TeleprompterPro-v${VERSION}.apk" \
+              "app/build/outputs/bundle/debug/TeleprompterPro-v${VERSION}.aab" \
+              --clobber
           else
             gh release create "v$VERSION"               "app/build/outputs/apk/debug/TeleprompterPro-v${VERSION}.apk"               "app/build/outputs/bundle/debug/TeleprompterPro-v${VERSION}.aab"               --title "Teleprompter Pro v$VERSION"               --generate-notes
           fi
