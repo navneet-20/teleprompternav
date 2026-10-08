@@ -58,10 +58,10 @@ public class MainActivity extends Activity {
         GradientDrawable scriptBg=new GradientDrawable(); scriptBg.setColor(Color.rgb(25,27,38)); scriptBg.setCornerRadius(dp(16)); script.setBackground(scriptBg); script.setPadding(dp(14),dp(14),dp(14),dp(14));
         root.addView(script,new LinearLayout.LayoutParams(-1,0,1));
 
-        count=tv("0 words",12); count.setTextColor(Color.LTGRAY); count.setPadding(dp(4),dp(4),0,0); root.addView(count,new LinearLayout.LayoutParams(-1,dp(32)));
+        count=tv("0 words • 0 characters",12); count.setTextColor(Color.LTGRAY); count.setPadding(dp(4),dp(4),0,0); root.addView(count,new LinearLayout.LayoutParams(-1,dp(32)));
         script.addTextChangedListener(new TextWatcher(){
             public void beforeTextChanged(CharSequence s,int a,int c,int d){}
-            public void onTextChanged(CharSequence s,int a,int b,int c){ count.setText(words()+" words"); updateCalculatedWpm(); }
+            public void onTextChanged(CharSequence s,int a,int b,int c){ count.setText(words()+" words • "+script.getText().length()+" characters"); updateCalculatedWpm(); }
             public void afterTextChanged(Editable e){}
         });
 
