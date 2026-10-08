@@ -4,6 +4,7 @@ import android.app.*;
 import android.content.*;
 import android.graphics.*;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.Typeface;
 import android.os.*;
 import android.view.*;
 import android.widget.*;
@@ -35,16 +36,20 @@ public class OverlayService extends Service {
         GradientDrawable bg=new GradientDrawable(); bg.setColor(Color.argb(Math.max(90,op*255/100),8,8,10)); bg.setCornerRadius(dp(16));
         box.setBackground(bg); box.setPadding(dp(8),dp(6),dp(8),dp(8));
 
-        LinearLayout bar=new LinearLayout(this); bar.setGravity(Gravity.CENTER_VERTICAL);
-        Button close=btn("×"), play=btn("▶"), reset=btn("↺"), slower=btn("−"), faster=btn("+");
+        LinearLayout bar=new LinearLayout(this); bar.setGravity(Gravity.CENTER_VERTICAL); bar.setPadding(dp(4),dp(2),dp(4),dp(2));
+        TextView dragHandle=control("⠿",13,false), close=control("✕",18,true), play=control("▶",16,false), reset=control("↺",16,false), slower=control("−",18,false), faster=control("+",18,false);
         speedLabel=label(speed+" WPM");
-        bar.addView(play); bar.addView(reset); bar.addView(slower);
+        bar.addView(dragHandle,new LinearLayout.LayoutParams(dp(34),dp(44)));
+        bar.addView(play,new LinearLayout.LayoutParams(dp(44),dp(44)));
+        bar.addView(reset,new LinearLayout.LayoutParams(dp(44),dp(44)));
+        bar.addView(slower,new LinearLayout.LayoutParams(dp(44),dp(44)));
         bar.addView(speedLabel,new LinearLayout.LayoutParams(0,dp(44),1));
-        bar.addView(faster); bar.addView(close); box.addView(bar);
+        bar.addView(faster,new LinearLayout.LayoutParams(dp(44),dp(44)));
+        bar.addView(close,new LinearLayout.LayoutParams(dp(46),dp(44))); box.addView(bar);
 
-        scroll=new ScrollView(this); scroll.setFillViewport(true); scroll.setSmoothScrollingEnabled(true);
+        scroll=new ScrollView(this); scroll.setFillViewport(true); scroll.setBackgroundColor(Color.TRANSPARENT); scroll.setSmoothScrollingEnabled(true);
         text=new TextView(this); text.setText(script); text.setTextColor(Color.WHITE); text.setTextSize(font);
-        text.setGravity(Gravity.CENTER_HORIZONTAL); text.setLineSpacing(0,1.12f);
+        text.setGravity(Gravity.CENTER_HORIZONTAL); text.setTypeface(Typeface.create("sans-serif",Typeface.NORMAL)); text.setLineSpacing(0,1.12f);
         text.setPadding(dp(24),dp(70),dp(24),dp(260)); scroll.addView(text);
         box.addView(scroll,new LinearLayout.LayoutParams(-1,0,1)); panel=box;
 
@@ -52,7 +57,7 @@ public class OverlayService extends Service {
         WindowManager.LayoutParams lp=new WindowManager.LayoutParams(dp(360),dp(300),
             Build.VERSION.SDK_INT>=26?WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY:WindowManager.LayoutParams.TYPE_PHONE,
             flags,PixelFormat.TRANSLUCENT);
-        lp.gravity=Gravity.TOP|Gravity.CENTER_HORIZONTAL; lp.y=dp(100); wm.addView(box,lp);
+        lp.gravity=Gravity.TOP|Gravity.CENTER_HORIZONTAL; lp.y=dp(110); wm.addView(box,lp);
 
         View.OnTouchListener drag=new View.OnTouchListener(){
             float dx,dy;
@@ -62,7 +67,7 @@ public class OverlayService extends Service {
                 return true;
             }
         };
-        bar.setOnTouchListener(drag);
+        dragHandle.setOnTouchListener(drag);
 
         close.setOnClickListener(v->stopSelf());
         play.setOnClickListener(v->{running=!running;play.setText(running?"Ⅱ":"▶");if(running)startScroll();});
@@ -71,7 +76,7 @@ public class OverlayService extends Service {
         faster.setOnClickListener(v->{speed=Math.min(370,speed+10);speedLabel.setText(speed+" WPM");});
     }
 
-    Button btn(String s){Button b=new Button(this);b.setText(s);b.setTextSize(12);return b;}
+    TextView control(String s,float size,boolean danger){ TextView t=new TextView(this); t.setText(s); t.setTextSize(size); t.setTextColor(danger?Color.rgb(255,170,185):Color.WHITE); t.setGravity(Gravity.CENTER); t.setTypeface(Typeface.DEFAULT,Typeface.BOLD); GradientDrawable g=new GradientDrawable(); g.setColor(danger?Color.rgb(72,35,48):Color.rgb(38,40,54)); g.setCornerRadius(dp(12)); t.setBackground(g); t.setPadding(0,0,0,0); return t; }
     TextView label(String s){TextView t=new TextView(this);t.setText(s);t.setTextColor(Color.WHITE);t.setGravity(Gravity.CENTER);t.setTextSize(13);return t;}
 
     void startScroll(){
