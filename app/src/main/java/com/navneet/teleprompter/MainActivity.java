@@ -29,14 +29,14 @@ public class MainActivity extends Activity {
 
     void build(){
         LinearLayout root=new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(dp(16),dp(14),dp(16),dp(10)); root.setBackgroundColor(Color.rgb(12,13,17));
+        root.setPadding(dp(16),dp(14),dp(16),dp(10)); root.setBackgroundColor(Color.rgb(14,16,24));
 
         LinearLayout header=new LinearLayout(this); header.setGravity(Gravity.CENTER_VERTICAL);
-        TextView logo=new TextView(this); logo.setText("▰"); logo.setTextSize(30); logo.setTextColor(Color.WHITE);
+        TextView logo=new TextView(this); logo.setText("◉"); logo.setTextSize(30); logo.setTextColor(Color.rgb(170,145,255));
         header.addView(logo,new LinearLayout.LayoutParams(dp(42),dp(50)));
         LinearLayout titles=new LinearLayout(this); titles.setOrientation(LinearLayout.VERTICAL);
         TextView title=tv("Teleprompter Pro",22); title.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
-        TextView sub=tv("Write • Time • Read • Record",12); sub.setTextColor(Color.LTGRAY);
+        TextView sub=tv("Write • Time • Read • Record",12); sub.setTextColor(Color.rgb(185,180,205));
         titles.addView(title); titles.addView(sub); header.addView(titles,new LinearLayout.LayoutParams(0,dp(52),1));
         root.addView(header);
 
@@ -49,7 +49,7 @@ public class MainActivity extends Activity {
 
         script=new EditText(this); script.setHint("Paste or type your script here…"); script.setGravity(Gravity.TOP|Gravity.START);
         script.setTextColor(Color.WHITE); script.setHintTextColor(Color.rgb(130,130,135)); script.setTextSize(18);
-        script.setBackgroundColor(Color.rgb(25,27,32)); script.setPadding(dp(14),dp(14),dp(14),dp(14));
+        GradientDrawable scriptBg=new GradientDrawable(); scriptBg.setColor(Color.rgb(25,27,38)); scriptBg.setCornerRadius(dp(16)); script.setBackground(scriptBg); script.setPadding(dp(14),dp(14),dp(14),dp(14));
         root.addView(script,new LinearLayout.LayoutParams(-1,0,1));
 
         count=tv("0 words",12); count.setTextColor(Color.LTGRAY); root.addView(count,new LinearLayout.LayoutParams(-1,dp(28)));
@@ -87,8 +87,8 @@ public class MainActivity extends Activity {
         root.addView(tv("Text size",13));
         fontSize=new SeekBar(this); fontSize.setMax(24); fontSize.setProgress(10); root.addView(fontSize,new LinearLayout.LayoutParams(-1,dp(38)));
 
-        Button launch=action("▶  LAUNCH FLOATING TELEPROMPTER");
-        launch.setTextSize(14); root.addView(launch,new LinearLayout.LayoutParams(-1,dp(54)));
+        Button launch=action("▶  Launch Floating Teleprompter");
+        launch.setTextSize(14); launch.setTextColor(Color.WHITE); GradientDrawable launchBg=new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,new int[]{Color.rgb(120,92,220),Color.rgb(72,142,220)}); launchBg.setCornerRadius(dp(18)); launch.setBackground(launchBg); root.addView(launch,new LinearLayout.LayoutParams(-1,dp(56)));
         TextView hint=tv("Tip: Target time automatically calculates WPM. You can adjust speed while reading.",11);
         hint.setTextColor(Color.LTGRAY); root.addView(hint);
 
@@ -112,6 +112,7 @@ public class MainActivity extends Activity {
         launch.setOnClickListener(v->launchOverlay());
 
         setContentView(root);
+        if(Build.VERSION.SDK_INT>=33) requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"},42);
     }
 
     TextWatcher simpleWatcher(){ return new TextWatcher(){ public void beforeTextChanged(CharSequence s,int a,int c,int d){} public void onTextChanged(CharSequence s,int a,int b,int c){updateCalculatedWpm();} public void afterTextChanged(Editable e){} }; }
