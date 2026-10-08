@@ -7,7 +7,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.*;
 import android.provider.Settings;
-import android.text.*;
+import android.text.Editable; import android.text.TextWatcher;
 import android.view.*;
 import android.widget.*;
 import java.util.*;
