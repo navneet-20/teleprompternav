@@ -56,3 +56,14 @@ jobs:
           name: TeleprompterPro-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          VERSION=$(grep -E "versionName ['\"]+[0-9]+\.[0-9]+\.[0-9]+['\"]" app/build.gradle | sed -E "s/.*versionName ['\"]([^'\"]+)['\"].*/\1/")
+          echo "Releasing version $VERSION"
+          gh release create "v$VERSION" app/build/outputs/apk/debug/app-debug.apk \
+            --title "Teleprompter Pro v$VERSION" \
+            --generate-notes
